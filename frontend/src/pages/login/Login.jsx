@@ -1,4 +1,17 @@
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import useLogin from "../../hooks/useLogin.js";
+
 const Login = () => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const { loading, login } = useLogin();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await login(username, password);
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-w-[24rem] mx-auto">
       <div className="w-full p-6 rounded-lg shadow-lg bg-white/10 backdrop-blur-xl border border-white/20">
@@ -7,7 +20,7 @@ const Login = () => {
           <span className="text-blue-500"> Buzzly</span>
         </h1>
 
-        <form className="mt-6 space-y-4">
+        <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
           <div>
             <label className="block mb-1 text-base text-gray-300">
               Username
@@ -16,6 +29,8 @@ const Login = () => {
               type="text"
               placeholder="Enter Username"
               className="w-full h-10 px-3 rounded-md border border-gray-600 bg-transparent text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             />
           </div>
 
@@ -27,21 +42,28 @@ const Login = () => {
               type="password"
               placeholder="Enter Password"
               className="w-full h-10 px-3 rounded-md border border-gray-600 bg-transparent text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
 
-          <a
-            href="#"
+          <Link
+            to="/signup"
             className="block text-sm text-gray-400 hover:underline hover:text-blue-500"
           >
             {"Don't"} Have An Account?
-          </a>
+          </Link>
 
           <button
             type="submit"
             className="w-full h-9 mt-2 rounded-md bg-blue-600 cursor-pointer text-white text-sm font-medium hover:bg-blue-700 transition"
+            disabled={loading}
           >
-            Login
+            {loading ? (
+              <span className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></span>
+            ) : (
+              "Login"
+            )}
           </button>
         </form>
       </div>

@@ -1,20 +1,46 @@
-const Message = () => {
-  return (
-    <div className="flex justify-end items-end space-x-2">
-      <div className="flex flex-col items-end space-y-1">
-        <div className="bg-blue-500 text-white p-3 rounded-lg max-w-xs wrap-break-words">
-          Hi what is up?
-        </div>
-        <span className="text-xs text-gray-500 opacity-50">12:42</span>
-      </div>
+import { useAuthContext } from "../../context/AuthContext";
+import useConversation from "../../zustand/useConversation";
+import { extractTime } from "../../utils/extractTime.js";
 
-      <div className="shrink-0">
-        <div className="w-10 h-10 rounded-full overflow-hidden mb-5 ml-1">
+const Message = ({ message }) => {
+  const { authUser } = useAuthContext();
+  const { selectedConversation } = useConversation();
+  const fromMe = message.senderId === authUser._id;
+  const formattedTime = extractTime(message.createdAt);
+  const shakeClass = message.shouldShake ? "shake" : "";
+  const profilePic = fromMe
+    ? authUser.profilePic
+    : selectedConversation?.profilePic;
+
+  return (
+    <div
+      className={`flex items-end gap-2 mb-4 ${
+        fromMe ? "justify-end" : "justify-start"
+      }`}
+    >
+      <div
+        className={`flex items-end gap-2 ${fromMe ? "flex-row-reverse" : ""}`}
+      >
+        <div className="w-10 h-10 rounded-full overflow-hidden shrink-0">
           <img
+            src={profilePic}
             alt="User avatar"
-            src="https://images.unsplash.com/photo-1750535135451-7c20e24b60c1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fHVzZXIlMjBhdmF0YXJ8ZW58MHx8MHx8fDA%3D"
             className="w-full h-full object-cover"
           />
+        </div>
+        <div
+          className={`flex flex-col ${fromMe ? "items-end" : "items-start"}`}
+        >
+          <div
+            className={`p-3 ${shakeClass} rounded-lg max-w-xs wrap-break-word ${
+              fromMe ? "bg-blue-500" : "bg-gray-700"
+            }`}
+          >
+            {message.message}
+          </div>
+          <span className="text-xs text-gray-400 opacity-50 mt-1">
+            {formattedTime}
+          </span>
         </div>
       </div>
     </div>
